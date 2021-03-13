@@ -1,40 +1,44 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import * as mongoose from 'mongoose';
-import { CreateCustomerDTO } from "../dto/create-customer-dto";
+import { ICustomer } from "../interfaces/customer.interface";
+import { IUser } from "../interfaces/user.interface";
 import { Customer } from "../models/customer.model";
 import { User } from "../models/user.model";
 
 @Injectable()
 export class AccountService {
     constructor(
-      //  @InjectModel('Customer') private readonly customerModel: Model<Customer>,
-        @InjectModel('User') private readonly userModel: mongoose.Model<User>
+        @InjectModel('Customer') private readonly customerModel: mongoose.Model<ICustomer>,
+        @InjectModel('User') private readonly userModel: mongoose.Model<IUser>
     ) { }
 
-    async create(data: User): Promise<User> {
+    async create(data: User): Promise<IUser> {
         const user = new this.userModel(data);
         return await user.save();
     }
-
     /*
-  async criar(createCustomerDTO: CreateCustomerDTO): Promise<User> {
-    const user = new this.userModel(createCustomerDTO);
-    return await user.save();
-  }
-  */
- async criar(data: User): Promise<User> {
-  const createdUser = new this.userModel(data);
-  return await createdUser.save();
-}
+        async findByUsername(username): Promise<User> {
+            return await this.userModel
+                .findOne({ username: username })
+                .exec();
+        }
+    
+        async update(username: string, data: any): Promise<User> {
+            return await this.userModel.findOneAndUpdate({ username }, data);
+        }
+        */
 
-    async findByUsername(username): Promise<User> {
-        return await this.userModel
-            .findOne({ username: username })
+    async authenticate(username, password): Promise<ICustomer> {
+        return await this.customerModel
+            .findOne(
+                {
+                    'user.username': username,
+                    'user.password': password
+                }
+            )
+            .populate('user')
             .exec();
-    }
 
-    async update(username: string, data: any): Promise<User> {
-        return await this.userModel.findOneAndUpdate({ username }, data);
     }
 }

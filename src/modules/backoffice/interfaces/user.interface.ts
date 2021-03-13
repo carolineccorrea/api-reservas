@@ -1,6 +1,7 @@
-export interface User {
-    readonly username: string,
-    readonly password: string,
-    readonly active: boolean,
+import { Document } from 'mongoose';
+export interface IUser extends Document {
+    username: string;
+    password: string,
+    active: boolean;
 
 }

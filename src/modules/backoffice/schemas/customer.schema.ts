@@ -23,9 +23,6 @@ export const CustomerSchema = new mongoose.Schema({
     },
     cars: [
         {
-            id: {
-                type: String,
-            },
             marca: {
                 type: String,
             },
